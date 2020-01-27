@@ -165,7 +165,9 @@ class Physics(_control.Physics):
       mjlib.mj_step1(self.model.ptr, self.data.ptr)
 
   def render(self, height=240, width=320, camera_id=-1, overlays=(),
-             depth=False, segmentation=False, scene_option=None):
+             depth=False, segmentation=False, scene_option=None,
+             lookat=np.array([0.0, 0.0, 0.0]), distance=2.0,
+             azimuth=90.0, elevation=-45.0):
     """Returns a camera view as a NumPy array of pixel values.
 
     Args:
@@ -190,8 +192,10 @@ class Physics(_control.Physics):
     Returns:
       The rendered RGB, depth or segmentation image.
     """
-    camera = Camera(
-        physics=self, height=height, width=width, camera_id=camera_id)
+
+    camera = MovableCamera(
+        physics=self, height=height, width=width)
+    camera.set_pose(lookat, distance, azimuth, elevation)
     image = camera.render(
         overlays=overlays, depth=depth, segmentation=segmentation,
         scene_option=scene_option)
